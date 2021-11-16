@@ -1,0 +1,6 @@
+__pycache__
+.vscode
+.history
+venv
+/test
+/3d-tiles-validator
