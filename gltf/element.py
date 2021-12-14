@@ -25,6 +25,9 @@ class Element:
             self.__copy(element)
         self.__init(camel_case=camel_case, **kwargs)
 
+    def __getattr__(self, name):
+        return None
+
     def clone(self):
         return Element(False, **self.as_dict(False))
 

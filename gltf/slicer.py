@@ -14,18 +14,18 @@ class Slicer(Element):
         for image in self.images:
             image.uri = image.uri.replace("\\", "/")
 
-    def __parse_node(self, node_index, matrix=Matrix4()):
+    def __parse_node(self, node_index, *, matrix=Matrix4()):
         node = self.nodes[node_index]
 
-        if hasattr(node, "matrix"):
+        if node.matrix:
             matrix = matrix.clone().multiply(Matrix4(node.matrix))
 
-        if hasattr(node, "mesh"):
+        if node.mesh is not None:
             self.__mesh_matrices[node.mesh].append(matrix)
 
-        if hasattr(node, "children"):
+        if node.children:
             for index in node.children:
-                self.__parse_node(index, matrix)
+                self.__parse_node(index, matrix=matrix)
 
     def get_mesh_matrices(self, mesh_id):
         return self.__mesh_matrices[mesh_id]
@@ -50,8 +50,8 @@ class Slicer(Element):
         return self.textures[:count]
 
     def __get_images_indices(self, material_indices):
-        return [self.materials[id].pbr_metallic_roughness.base_color_texture.index for id in material_indices if hasattr(
-            self.materials[id].pbr_metallic_roughness, "base_color_texture")]
+        return [self.materials[id].pbr_metallic_roughness.base_color_texture.index for id in material_indices if
+                self.materials[id].pbr_metallic_roughness.base_color_texture is not None]
 
     def slice_mesh(self, mesh_id: int):
         return self.slice_primitives(self.meshes[mesh_id].primitives)
@@ -65,13 +65,13 @@ class Slicer(Element):
         return list(ret)
 
     def __get_material_indices(self, primitives):
-        return [primitive.material for primitive in primitives if hasattr(primitive, "material")]
+        return [primitive.material for primitive in primitives if primitive.material is not None]
 
     def __get_materials(self, material_indices, texture_indices):
         materials = [self.materials[id].clone()
                      for id in material_indices]
         for material in materials:
-            if hasattr(material.pbr_metallic_roughness, "base_color_texture"):
+            if material.pbr_metallic_roughness.base_color_texture is not None:
                 material.pbr_metallic_roughness.base_color_texture.index = texture_indices.index(
                     material.pbr_metallic_roughness.base_color_texture.index)
         return materials
@@ -119,7 +119,7 @@ class Slicer(Element):
             attributes = {k: accessor_indices.index(v)
                           for k, v in p.attributes.__dict__.items()}
             material = None
-            if hasattr(p, "material"):
+            if p.material:
                 material = material_indices.index(p.material)
             ret.append(Element(indices=indices,
                        attributes=attributes, material=material))
