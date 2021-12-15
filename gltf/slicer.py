@@ -7,9 +7,8 @@ class Slicer(Element):
     def __init__(self, gltf, **kwargs):
 
         super().__init__(gltf, **kwargs)
-        self.__mesh_matrices = [[] for _ in range(len(self.meshes))]
+        self.__matrices = [[] for _ in range(len(self.meshes))]
         root = self.scenes[self.scene].nodes[0]
-        # root = 2
         self.__parse_node(root)
         for image in self.images:
             image.uri = image.uri.replace("\\", "/")
@@ -21,14 +20,14 @@ class Slicer(Element):
             matrix = matrix.clone().multiply(Matrix4(node.matrix))
 
         if node.mesh is not None:
-            self.__mesh_matrices[node.mesh].append(matrix)
+            self.__matrices[node.mesh].append(matrix)
 
         if node.children:
             for index in node.children:
                 self.__parse_node(index, matrix=matrix)
 
-    def get_mesh_matrices(self, mesh_id):
-        return self.__mesh_matrices[mesh_id]
+    def get_matrices(self, mesh_id):
+        return self.__matrices[mesh_id]
 
     @property
     def meshes_count(self):
@@ -109,7 +108,7 @@ class Slicer(Element):
 
         return box
 
-    def get_bounding_box_by_mesh(self, mesh_id: int):
+    def get_bounding_box(self, mesh_id: int):
         return self.get_bounding_box_by_primitives(self.meshes[mesh_id].primitives)
 
     def __get_meshes(self, primitives, accessor_indices, material_indices):
