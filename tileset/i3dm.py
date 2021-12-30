@@ -9,8 +9,8 @@ class I3dm(Content):
     GLTF_FORMAT = 1
     __HEADER_LEN = 32
 
-    def __init__(self, name: str, content: bytes, matrices: list) -> None:
-        super().__init__(name, content)
+    def __init__(self, name: str, content: bytes, matrices: list, *, extras=None) -> None:
+        super().__init__(name, content, extras=extras)
         self.__matrices = matrices
 
     def _magic(self):
