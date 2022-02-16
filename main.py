@@ -7,16 +7,34 @@ from pathlib import Path
 from tileset import B3dm
 import shutil
 import timeit
+from urllib.request import urlopen
 
 app = typer.Typer()
+
+
+def is_data_uri(uri):
+    return uri.startswith("data:")
+
+
+def read_buffer(uri, parent):
+    if is_data_uri(uri):
+        with urlopen(uri) as response:
+            return response.read()
+
+    with open(parent / uri, "rb") as f:
+        return f.read()
 
 
 def read_gltf(fin):
     with open(fin, encoding='utf-8') as f:
         gltf = json.load(f, object_hook=lambda d: Element(**d))
 
-    with open(Path(fin).parent / gltf.buffers[0].uri, "rb") as f:
-        buffer = f.read()
+    # buffers = []
+    # for buffer in gltf.buffers:
+    #     buffers.append(read_buffer(buffer.uri))
+    # with open(Path(fin).parent / gltf.buffers[0].uri, "rb") as f:
+    #     buffer = f.read()
+    buffer = read_buffer(gltf.buffers[0].uri, Path(fin).parent)
 
     return gltf, buffer
 
