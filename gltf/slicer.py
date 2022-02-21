@@ -25,7 +25,8 @@ class Slicer(Element):
 
         if node.mesh is not None:
             self.__matrices[node.mesh].append(matrix)
-            self.__extras[node.mesh].append(extras.as_dict())
+            if extras is not None:
+                self.__extras[node.mesh].append(extras.as_dict())
 
         if node.children:
             for index in node.children:
@@ -87,7 +88,8 @@ class Slicer(Element):
         ret = bytearray()
         for index in buffer_view_indices:
             view = self.buffer_views[index]
-            ret += self.buffer[view.byte_offset:view.byte_offset +
+            byte_offset = view.byte_offset if view.byte_offset else 0
+            ret += self.buffer[byte_offset:byte_offset +
                                view.byte_length]
         return ret
 
