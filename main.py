@@ -8,8 +8,10 @@ from tileset import B3dm
 import shutil
 import timeit
 from urllib.request import urlopen
+import logging
 
 app = typer.Typer()
+logger = logging.getLogger(__name__)
 
 
 def is_data_uri(uri):
@@ -47,8 +49,11 @@ def copy_textures(fin, fout, images):
 
     for image in images:
         dest = dest_parent / image.uri
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(src_parent / image.uri, dest)
+        try:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src_parent / image.uri, dest)
+        except Exception as e:
+            logger.error(e)
 
 
 @app.command()
@@ -59,6 +64,8 @@ def tileset(fin: str = typer.Argument(..., help="input gltf path"), fout: str = 
 
     if not fout:
         fout = Path(fin).parent / "tileset.json"
+
+    Path(fout).parent.mkdir(parents=True, exist_ok=True)
 
     gltf_to_tileset(gltf, buffer, fout, measure)
     copy_textures(fin, fout, gltf.images)
