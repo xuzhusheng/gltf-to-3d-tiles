@@ -42,6 +42,9 @@ def read_gltf(fin):
 
 
 def copy_textures(fin, fout, images):
+    if not images:
+        return
+
     src_parent = Path(fin).parent
     dest_parent = Path(fout).parent
     if src_parent == dest_parent:
