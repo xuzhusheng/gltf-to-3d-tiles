@@ -11,6 +11,9 @@ class Slicer(Element):
         self.__extras = [[] for _ in range(len(self.meshes))]
         root = self.scenes[self.scene].nodes[0]
         self.__parse_node(root)
+        if not self.images:
+            return
+
         for image in self.images:
             image.uri = image.uri.replace("\\", "/")
 
