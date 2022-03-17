@@ -58,7 +58,8 @@ class Slicer(Element):
         return [self.images[id] for id in image_indices]
 
     def __get_textures(self, count):
-        return self.textures[:count]
+        if self.textures:
+            return self.textures[:count]
 
     def __get_images_indices(self, material_indices):
         return [self.materials[id].pbr_metallic_roughness.base_color_texture.index for id in material_indices if
