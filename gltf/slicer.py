@@ -1,4 +1,4 @@
-from gltf import Glb
+from .gltf import Glb
 from utils import Box3, Matrix4
 from .element import Element
 

@@ -3,7 +3,7 @@ import numpy as np
 import math
 from tileset import Tile, Tileset, Measure
 from pathlib import Path
-from gltf import Slicer
+from gltf import Slicer, io
 from utils import Box3, Matrix4
 
 
@@ -68,7 +68,9 @@ def split_group(tiles):
     return groups
 
 
-def gltf_to_tileset(gltf, buffer, fout, measure: Measure = Measure.METER):
+def gltf_to_tileset(fin, fout, measure: Measure = Measure.METER):
+    gltf, buffer = io.read_gltf(fin)
+    Path(fout).parent.mkdir(parents=True, exist_ok=True)
     gltf_slicer = Slicer(gltf, buffer=buffer)
     Tile.measure = Measure.FOOT
     tiles = list(map(lambda id: Tile(content_id=id, instance_box=gltf_slicer.get_bounding_box(
@@ -85,3 +87,5 @@ def gltf_to_tileset(gltf, buffer, fout, measure: Measure = Measure.METER):
     for tile in tiles:
         with open(Path(fout).parent / tile.content.uri, "wb") as f:
             f.write(tile.content.as_bytes())
+
+    io.copy_textures(fin, fout, gltf.images)
