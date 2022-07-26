@@ -25,8 +25,8 @@ def build_bvh(tiles):
         for i in range(len(sorted_tiles)-1):
             left_box.union(sorted_tiles[i].box_world)
             right_box.union(sorted_tiles[-i-1].box_world)
-            left_cost[i] = sah_cost(left_box.size, i)
-            right_cost[-i-1] = sah_cost(right_box.size, i)
+            left_cost[i] = sah_cost(left_box.size, i + 1)
+            right_cost[-i-1] = sah_cost(right_box.size, i + 1)
         costs = list(
             map(lambda l, r: l + r, left_cost, right_cost))
         min_cost_axis = min(costs)
@@ -40,8 +40,8 @@ def build_bvh(tiles):
     return Tile().add_child(build_bvh(sorted_tiles[:split])).add_child(build_bvh(sorted_tiles[split:]))
 
 
-def sah_cost(size, index):
-    return (size[0] * size[1] + size[1] * size[2] + size[2] * size[0]) * index
+def sah_cost(size, count):
+    return (size[0] * size[1] + size[1] * size[2] + size[2] * size[0]) * count
 
 
 def split_group(tiles):
