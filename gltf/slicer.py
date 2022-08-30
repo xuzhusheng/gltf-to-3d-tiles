@@ -1,6 +1,7 @@
 from .gltf import Glb
 from utils import Box3, Matrix4
 from .element import Element
+import sys
 
 
 class Slicer(Element):
@@ -47,8 +48,8 @@ class Slicer(Element):
 
     def slice_primitives(self, primitives: list):
         accessor_indices = self.__get_accessor_indices(primitives)
-        buffer_view_indices = [
-            self.accessors[id].buffer_view for id in accessor_indices]
+        buffer_view_indices = list(set([
+            self.accessors[id].buffer_view for id in accessor_indices]))
         material_indices = self.__get_material_indices(primitives)
         image_indices = self.__get_images_indices(material_indices)
         return Glb(self.__get_buffer(buffer_view_indices), meshes=self.__get_meshes(primitives, accessor_indices, material_indices), accessors=self.__get_accessors(accessor_indices, buffer_view_indices),
