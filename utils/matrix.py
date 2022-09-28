@@ -51,6 +51,42 @@ class Matrix4:
 
         return [sx, sy, sz]
 
+    def scaleBy(self, s):
+        self.__matrix[0,0] *= s[0];
+        self.__matrix[0,1] *= s[1];
+        self.__matrix[0,2] *= s[2];
+        self.__matrix[1,0] *= s[0];
+        self.__matrix[1,1] *= s[1];
+        self.__matrix[1,2] *= s[2];
+        self.__matrix[2,0] *= s[0];
+        self.__matrix[2,1] *= s[1];
+        self.__matrix[2,2] *= s[2];
+        return self
+
+    def translateBy(self, t):
+        self.__matrix[0,3] += t[0];
+        self.__matrix[1,3] += t[1];
+        self.__matrix[2,3] += t[2];
+        return self
+
+    def rotateBy(self, q):
+        x2 = 2*q[0]*q[0]
+        y2 = 2*q[1]*q[1]
+        z2 = 2*q[2]*q[2]
+        xy = 2*q[0]*q[1]
+        xz = 2*q[0]*q[2]
+        yz = 2*q[1]*q[2]
+        xw = 2*q[0]*q[3]
+        yw = 2*q[1]*q[3]
+        zw = 2*q[2]*q[3]
+        mul = Matrix4([
+            1-y2-z2, xy-zw, xz+yw, 0,
+            xy+zw, 1-x2-z2, yz-xw, 0,
+            xz-yw, yz+xw, 1-x2-y2, 0,
+            0, 0, 0, 1
+        ])
+        return self.multiply(mul)
+
     def clone(self):
         return Matrix4(self.__matrix)
 

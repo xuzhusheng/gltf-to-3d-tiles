@@ -23,6 +23,14 @@ class Slicer(Element):
 
         if node.matrix:
             matrix = matrix.clone().multiply(Matrix4(node.matrix))
+            # XXX Check for translation/scale/rotation here?
+        else:
+            if node.scale:
+                matrix = matrix.clone().scaleBy(node.scale)
+            if node.rotation:
+                matrix = matrix.clone().rotateBy(node.rotation)
+            if node.translation:
+                matrix = matrix.clone().translateBy(node.translation)
 
         if node.extras:
             extras = node.extras
@@ -51,9 +59,11 @@ class Slicer(Element):
         buffer_view_indices = list(set([
             self.accessors[id].buffer_view for id in accessor_indices]))
         material_indices = self.__get_material_indices(primitives)
-        image_indices = self.__get_images_indices(material_indices)
+        sampler_indices = self.__get_sampler_indices(material_indices)
+        texture_indices = self.__get_texture_indices(material_indices)
+        image_indices = self.__get_image_indices(material_indices)
         return Glb(self.__get_buffer(buffer_view_indices), meshes=self.__get_meshes(primitives, accessor_indices, material_indices), accessors=self.__get_accessors(accessor_indices, buffer_view_indices),
-                   buffer_views=self.__get_buffer_views(buffer_view_indices), materials=self.__get_materials(material_indices, image_indices), textures=self.__get_textures(len(image_indices)), images=self.__get_images(image_indices))
+                   buffer_views=self.__get_buffer_views(buffer_view_indices), materials=self.__get_materials(material_indices, image_indices), textures=self.__get_textures(len(texture_indices)), images=self.__get_images(image_indices), samplers=self.__get_samplers(len(sampler_indices)))
 
     def __get_images(self, image_indices):
         return [self.images[id] for id in image_indices]
@@ -62,9 +72,19 @@ class Slicer(Element):
         if self.textures:
             return self.textures[:count]
 
-    def __get_images_indices(self, material_indices):
+    def __get_samplers(self, count):
+        if self.samplers:
+            return self.samplers[:count]
+
+    def __get_texture_indices(self, material_indices):
         return [self.materials[id].pbr_metallic_roughness.base_color_texture.index for id in material_indices if
                 self.materials[id].pbr_metallic_roughness.base_color_texture is not None]
+
+    def __get_image_indices(self, texture_indices):
+        return [self.textures[id].source for id in texture_indices]
+
+    def __get_sampler_indices(self, texture_indices):
+        return [self.textures[id].sampler for id in texture_indices]
 
     def slice_mesh(self, mesh_id: int):
         return self.slice_primitives(self.meshes[mesh_id].primitives)

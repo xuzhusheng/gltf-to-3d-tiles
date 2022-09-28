@@ -111,9 +111,9 @@ class Tile:
             return max(list(map(lambda tile: tile.geometric_error, self.__children)))
 
         if Tile.measure is Measure.FOOT:
-            return self.__instance_box.diagonal * FOOT_TO_METER_MULTIPLIER
+            return self.box_world.diagonal * FOOT_TO_METER_MULTIPLIER
 
-        return self.__instance_box.diagonal
+        return self.box_world.diagonal
 
     @ property
     def dict(self):
