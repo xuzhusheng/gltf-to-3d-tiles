@@ -10,7 +10,8 @@ class Slicer(Element):
         super().__init__(gltf, **kwargs)
         self.__matrices = [[] for _ in range(len(self.meshes))]
         self.__extras = [[] for _ in range(len(self.meshes))]
-        root = self.scenes[self.scene].nodes[0]
+        scene = 0 if self.scene is None else self.scene
+        root = self.scenes[scene].nodes[0]
         self.__parse_node(root)
         if not self.images:
             return
