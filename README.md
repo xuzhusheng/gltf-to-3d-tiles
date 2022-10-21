@@ -4,9 +4,7 @@ glTF to 3d Tiles Converter. Convert glTF model to Glb, b3dm or 3d tiles format.
 
 ## Usage
 
----
-
-```
+```text
 λ python main.py  --help
 Usage: main.py [OPTIONS] COMMAND [ARGS]...
 
@@ -26,7 +24,7 @@ Commands:
 
 ### Glb
 
-```
+```text
 λ python main.py glb --help
 Usage: main.py glb [OPTIONS] FIN [FOUT]
 
@@ -42,7 +40,7 @@ Options:
 
 ### b3dm
 
-```
+```text
  λ python main.py b3dm --help
 Usage: main.py b3dm [OPTIONS] FIN [FOUT]
 
@@ -58,7 +56,7 @@ Options:
 
 ### 3d tiles
 
-```
+```text
  λ python main.py tileset --help
 Usage: main.py tileset [OPTIONS] FIN [FOUT]
 
@@ -71,5 +69,7 @@ Arguments:
 Options:
   --measure [meter|foot]  measure of attributes in gltf buffers  [default:
                           Measure.METER]
+  --up [y|z]              up direction used in gltf coordinate system
+                          [default: Axis.Y]
   --help                  Show this message and exit.
 ```

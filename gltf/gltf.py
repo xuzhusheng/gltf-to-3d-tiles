@@ -2,9 +2,15 @@ import json
 import math
 import utils
 from .element import Element
+from enum import Enum
 
 Z_UP_TO_Y_UP_MATRIX = [1.0, 0.0,  0.0, 0.0, 0.0,
                        0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,  0.0, 1.0]
+
+
+class Axis(str, Enum):
+    Y = "y"
+    Z = "z"
 
 
 class Gltf(Element):
@@ -14,7 +20,7 @@ class Gltf(Element):
         "copyright": "2019 (p) jason"
     }
     SCENES = [Element(nodes=[0], name="Scene")]
-    NODES = [Element(mesh=0, matrix=Z_UP_TO_Y_UP_MATRIX)]
+    up_direction = Axis.Y
 
     def __init__(self, **kwargs) -> None:
 
@@ -22,7 +28,8 @@ class Gltf(Element):
         self.asset = Gltf.ASSET
         self.scenes = Gltf.SCENES
         self.scene = 0
-        self.nodes = Gltf.NODES
+        self.nodes = [Element(mesh=0, matrix=Z_UP_TO_Y_UP_MATRIX)
+                      ] if Gltf.up_direction is Axis.Y else [Element(mesh=0)]
 
         super().__init__(False, **kwargs)
 

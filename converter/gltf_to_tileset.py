@@ -1,6 +1,7 @@
 import json
 import numpy as np
 import math
+from gltf.gltf import Axis, Gltf
 from tileset import Tile, Tileset, Measure
 from pathlib import Path
 from gltf import Slicer, io
@@ -68,7 +69,8 @@ def split_group(tiles):
     return groups
 
 
-def gltf_to_tileset(fin, fout, measure: Measure = Measure.METER):
+def gltf_to_tileset(fin, fout, measure: Measure = Measure.METER, up_direction: Axis = Axis.Y):
+    Gltf.up_direction = up_direction
     gltf, buffer = io.read_gltf(fin)
     Path(fout).parent.mkdir(parents=True, exist_ok=True)
     gltf_slicer = Slicer(gltf, buffer=buffer)
