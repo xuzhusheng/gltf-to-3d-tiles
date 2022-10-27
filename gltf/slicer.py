@@ -154,7 +154,7 @@ class Slicer(Element):
             attributes = {k: accessor_indices.index(v)
                           for k, v in p.attributes.__dict__.items()}
             material = None
-            if p.material:
+            if p.material is not None:
                 material = material_indices.index(p.material)
             ret.append(Element(indices=indices,
                        attributes=attributes, material=material))
