@@ -89,7 +89,7 @@ class Tile:
         self.__matrix.premultiply(matrix)
         return self
 
-    @ property
+    @property
     def children(self):
         return self.__children
 
@@ -105,7 +105,7 @@ class Tile:
     def centroid_world(self):
         return self.box_world.center
 
-    @ property
+    @property
     def geometric_error(self):
         if self.__content_id is None:
             return max(list(map(lambda tile: tile.geometric_error, self.__children)))
@@ -115,7 +115,7 @@ class Tile:
 
         return self.box_world.diagonal
 
-    @ property
+    @property
     def dict(self):
         ret = {
             "boundingVolume": {"box": self.box.list},

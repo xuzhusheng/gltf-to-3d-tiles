@@ -3,7 +3,7 @@ import math
 
 
 class Matrix4:
-    def __init__(self, elements=[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], order="F") -> None:
+    def __init__(self, elements=[1.0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1], order="F") -> None:
         self.__order = order
         self.__matrix = np.array(elements).reshape(4, 4, order=order)
 

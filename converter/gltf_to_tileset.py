@@ -45,7 +45,8 @@ def sah_cost(size, count):
     return (size[0] * size[1] + size[1] * size[2] + size[2] * size[0]) * count
 
 
-def split_group(tiles):
+def split_group(source):
+    tiles = source[:]
     length = len(tiles)
     if 1 == length:
         return [tiles[0]]

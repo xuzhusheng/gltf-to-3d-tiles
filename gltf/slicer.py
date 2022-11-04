@@ -17,6 +17,9 @@ class Slicer(Element):
             return
 
         for image in self.images:
+            if not image.uri:
+                continue
+
             image.uri = image.uri.replace("\\", "/")
 
     def __parse_node(self, node_index, *, matrix=Matrix4(), extras=None):

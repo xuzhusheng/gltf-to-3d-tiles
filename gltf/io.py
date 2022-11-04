@@ -46,6 +46,9 @@ def copy_textures(fin, fout, images):
         return
 
     for image in images:
+        if not image.uri:
+            continue
+
         dest = dest_parent / image.uri
         try:
             dest.parent.mkdir(parents=True, exist_ok=True)
