@@ -15,6 +15,14 @@ def get__attribute(obj, name):
     return ret
 
 
+def set__texture(material, name, texture_indices):
+    for key, value in material.__dict__.items():
+        if key == name:
+            setattr(material, key, texture_indices.index(value))
+        elif type(value) == Element:
+            set__texture(value, name, texture_indices)
+
+
 class Slicer(Element):
     def __init__(self, gltf, **kwargs):
 
@@ -87,7 +95,7 @@ class Slicer(Element):
             if image.buffer_view:
                 image.buffer_view = buffer_view_indices.index(
                     image.buffer_view)
-        
+
         return ret
 
     def __get_textures(self, count):
@@ -130,10 +138,12 @@ class Slicer(Element):
     def __get_materials(self, material_indices, texture_indices):
         materials = [self.materials[id].clone()
                      for id in material_indices]
+
         for material in materials:
-            if material.pbr_metallic_roughness.base_color_texture is not None:
-                material.pbr_metallic_roughness.base_color_texture.index = texture_indices.index(
-                    material.pbr_metallic_roughness.base_color_texture.index)
+            set__texture(material, "index", texture_indices)
+            # if material.pbr_metallic_roughness.base_color_texture is not None:
+            #     material.pbr_metallic_roughness.base_color_texture.index = texture_indices.index(
+            #         material.pbr_metallic_roughness.base_color_texture.index)
         return materials
 
     def __get_buffer(self, buffer_view_indices):
