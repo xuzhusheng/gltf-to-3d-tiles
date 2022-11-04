@@ -4,6 +4,17 @@ from .element import Element
 import sys
 
 
+def get__attribute(obj, name):
+    ret = []
+    for key, value in obj.__dict__.items():
+        if key == name:
+            ret.append(value)
+        elif type(value) == Element:
+            ret += get__attribute(value, name)
+
+    return ret
+
+
 class Slicer(Element):
     def __init__(self, gltf, **kwargs):
 
@@ -60,17 +71,24 @@ class Slicer(Element):
 
     def slice_primitives(self, primitives: list):
         accessor_indices = self.__get_accessor_indices(primitives)
-        buffer_view_indices = list(set([
-            self.accessors[id].buffer_view for id in accessor_indices]))
         material_indices = self.__get_material_indices(primitives)
         texture_indices = self.__get_texture_indices(material_indices)
         sampler_indices = self.__get_sampler_indices(texture_indices)
         image_indices = self.__get_image_indices(texture_indices)
+        buffer_view_indices = list(set([
+            self.accessors[id].buffer_view for id in accessor_indices] + [
+            self.images[id].buffer_view for id in image_indices]))
         return Glb(self.__get_buffer(buffer_view_indices), meshes=self.__get_meshes(primitives, accessor_indices, material_indices), accessors=self.__get_accessors(accessor_indices, buffer_view_indices),
-                   buffer_views=self.__get_buffer_views(buffer_view_indices), materials=self.__get_materials(material_indices, image_indices), textures=self.__get_textures(len(texture_indices)), images=self.__get_images(image_indices), samplers=self.__get_samplers(len(sampler_indices)))
+                   buffer_views=self.__get_buffer_views(buffer_view_indices), materials=self.__get_materials(material_indices, image_indices), textures=self.__get_textures(len(texture_indices)), images=self.__get_images(image_indices, buffer_view_indices), samplers=self.__get_samplers(len(sampler_indices)))
 
-    def __get_images(self, image_indices):
-        return [self.images[id] for id in image_indices]
+    def __get_images(self, image_indices, buffer_view_indices):
+        ret = [self.images[id] for id in image_indices]
+        for image in ret:
+            if image.buffer_view:
+                image.buffer_view = buffer_view_indices.index(
+                    image.buffer_view)
+        
+        return ret
 
     def __get_textures(self, count):
         if self.textures:
@@ -81,8 +99,13 @@ class Slicer(Element):
             return self.samplers[:count]
 
     def __get_texture_indices(self, material_indices):
-        return [self.materials[id].pbr_metallic_roughness.base_color_texture.index for id in material_indices if
-                self.materials[id].pbr_metallic_roughness.base_color_texture is not None]
+        ret = []
+        for id in material_indices:
+            ret += get__attribute(self.materials[id], "index")
+
+        return ret
+        # return [self.materials[id].pbr_metallic_roughness.base_color_texture.index for id in material_indices if
+        #         self.materials[id].pbr_metallic_roughness.base_color_texture is not None]
 
     def __get_image_indices(self, texture_indices):
         return [self.textures[id].source for id in texture_indices]
