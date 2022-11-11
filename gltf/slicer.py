@@ -86,12 +86,11 @@ class Slicer(Element):
         buffer_view_indices = list(set([
             self.accessors[id].buffer_view for id in accessor_indices] + [
             self.images[id].buffer_view for id in image_indices if self.images[id].buffer_view is not None]))
-
         return Glb(self.__get_buffer(buffer_view_indices), meshes=self.__get_meshes(primitives, accessor_indices, material_indices), accessors=self.__get_accessors(accessor_indices, buffer_view_indices),
                    buffer_views=self.__get_buffer_views(buffer_view_indices), materials=self.__get_materials(material_indices, image_indices), textures=self.__get_textures(len(texture_indices)), images=self.__get_images(image_indices, buffer_view_indices), samplers=self.__get_samplers(len(sampler_indices)))
 
     def __get_images(self, image_indices, buffer_view_indices):
-        ret = [self.images[id] for id in image_indices]
+        ret = [self.images[id].clone() for id in image_indices]
         for image in ret:
             if image.buffer_view:
                 image.buffer_view = buffer_view_indices.index(
