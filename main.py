@@ -44,12 +44,12 @@ def glb(
         help="Optional output glb path (defaults to the path of the input file)"
             )):
     """convert gltf to glb"""
-    gltf, buffer = io.read_gltf(fin)
+    gltf, buffers = io.read_gltf(fin)
 
     if not fout:
         fout = Path(fin).with_suffix(".glb")
     with open(fout, "wb") as f:
-        f.write(Glb(buffer, **gltf.as_dict(False)).as_bytes())
+        f.write(Glb(buffers, **gltf.as_dict(False)).as_bytes())
     io.copy_textures(fin, fout, gltf.images)
     typer.echo("completed")
 
@@ -63,7 +63,7 @@ def b3dm(
         help="Optional output b3dm path(defaults to the path of the input file)"
             )):
     """convert gltf to b3dm"""
-    gltf, buffer = io.read_gltf(fin)
+    gltf, buffers = io.read_gltf(fin)
 
     if not fout:
         fout = Path(fin).with_suffix(".b3dm")
@@ -71,7 +71,7 @@ def b3dm(
     with open(fout, "wb") as f:
         f.write(
             B3dm("b3dm",
-                 Glb(buffer, **gltf.as_dict(False)).as_bytes()).as_bytes())
+                 Glb(buffers, **gltf.as_dict(False)).as_bytes()).as_bytes())
     io.copy_textures(fin, fout, gltf.images)
     typer.echo("completed")
 

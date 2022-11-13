@@ -41,14 +41,23 @@ class Glb:
     CHUNK_JSON = b'JSON'
     CHUNK_BIN = b'BIN'.ljust(4, b'\0')
 
-    def __init__(self, buffer, **kwargs) -> None:
-        self.buffer = buffer
+    def __init__(self, buffers, **kwargs) -> None:
+        self.buffers = buffers
         self.__json = Gltf(**kwargs)
         self.__json.buffers = [Element(byte_length=self.buffer_len)]
 
     @property
     def buffer_len(self):
-        return utils.padded_len(len(self.buffer))
+        bufferLen = 0
+        for buffer in self.buffers:
+            bufferLen += utils.padded_len(len(buffer))
+        return bufferLen
+
+    def get_buffer(self) -> bytearray:
+        ret = bytearray()
+        for buffer in self.buffers:
+            ret += buffer.ljust(utils.padded_len(len(buffer)), b"\0")
+        return ret
 
     def as_bytes(self) -> bytearray:
         ret = bytearray()
@@ -59,13 +68,13 @@ class Glb:
             self.__json.as_dict(True), separators=(",", ":")).encode()
         json_len = math.ceil(len(json_chunk) / 4) * 4
         json_chunk = json_chunk.ljust(json_len, b" ")
-        buffer = self.buffer.ljust(self.buffer_len, b"\0")
-        glb_len = 12 + 8 + json_len + 8 + self.buffer_len
+        buffer = self.get_buffer()
+        glb_len = 12 + 8 + json_len + 8 + len(buffer)
         ret += utils.int_to_bytes(glb_len)
         ret += utils.int_to_bytes(json_len)
         ret += Glb.CHUNK_JSON
         ret += json_chunk
-        ret += utils.int_to_bytes(self.buffer_len)
+        ret += utils.int_to_bytes(len(buffer))
         ret += Glb.CHUNK_BIN
         ret += buffer
         return ret
