@@ -13,14 +13,11 @@ def read_gltf(fin):
     with open(fin, encoding='utf-8') as f:
         gltf = json.load(f, object_hook=lambda d: Element(**d))
 
-    # buffers = []
-    # for buffer in gltf.buffers:
-    #     buffers.append(read_buffer(buffer.uri))
-    # with open(Path(fin).parent / gltf.buffers[0].uri, "rb") as f:
-    #     buffer = f.read()
-    buffer = read_buffer(gltf.buffers[0].uri, Path(fin).parent)
+    buffers = []
+    for buffer in gltf.buffers:
+        buffers.append(read_buffer(buffer.uri, Path(fin).parent))
 
-    return gltf, buffer
+    return gltf, buffers
 
 
 def read_buffer(uri, parent):

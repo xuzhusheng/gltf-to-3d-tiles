@@ -72,9 +72,9 @@ def split_group(source):
 
 def gltf_to_tileset(fin, fout, measure: Measure = Measure.METER, up_direction: Axis = Axis.Y):
     Gltf.up_direction = up_direction
-    gltf, buffer = io.read_gltf(fin)
+    gltf, buffers = io.read_gltf(fin)
     Path(fout).parent.mkdir(parents=True, exist_ok=True)
-    gltf_slicer = Slicer(gltf, buffer=buffer)
+    gltf_slicer = Slicer(gltf, buffers=buffers)
     Tile.measure = measure
     tiles = list(map(lambda id: Tile(content_id=id, instance_box=gltf_slicer.get_bounding_box(
         id), instances_matrices=gltf_slicer.get_matrices(id), matrix=Matrix4(), gltf=gltf_slicer.slice_mesh(id).as_bytes(), extras=gltf_slicer.get_extras(id)), range(gltf_slicer.meshes_count)))

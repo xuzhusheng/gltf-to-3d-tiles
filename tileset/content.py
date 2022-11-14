@@ -47,6 +47,9 @@ class Content(ABC):
     def _header_len(self):
         pass
 
+    def _byte_len(self):
+        return self._header_len() + self._feature_json_len() + len(self._feature_bin()) + self._batch_json_len() + len(self.content)
+
     def _header(self) -> bytes:
         ret = bytearray(self._magic())
         ret += utils.int_to_bytes(Content.VERSION)
@@ -55,8 +58,7 @@ class Content(ABC):
         feature_bytes = self._feature_bin()
         feature_bytes_len = len(feature_bytes)
         batch_json_len = self._batch_json_len()
-        ret += utils.int_to_bytes(self._header_len() +
-                                  feature_json_len + feature_bytes_len + batch_json_len + len(self.content))
+        ret += utils.int_to_bytes(utils.padded_len(self._byte_len()))
         ret += utils.int_to_bytes(feature_json_len)
         ret += utils.int_to_bytes(feature_bytes_len)
         ret += utils.int_to_bytes(batch_json_len)
@@ -74,6 +76,9 @@ class Content(ABC):
         ret += feature_bytes
         ret += bytearray(self._batch_json().ljust(self._batch_json_len(), b' '))
         ret += self.content
+        byteLen = self._byte_len()
+        padding = utils.padded_len(byteLen) - byteLen
+        ret += b'\0' * padding
         return ret
 
     @abstractmethod

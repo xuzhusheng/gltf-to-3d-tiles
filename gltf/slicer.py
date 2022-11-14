@@ -1,5 +1,5 @@
 from .gltf import Glb
-from utils import Box3, Matrix4
+import utils
 from .element import Element
 import sys
 
@@ -41,11 +41,11 @@ class Slicer(Element):
 
             image.uri = image.uri.replace("\\", "/")
 
-    def __parse_node(self, node_index, *, matrix=Matrix4(), extras=None):
+    def __parse_node(self, node_index, *, matrix=utils.Matrix4(), extras=None):
         node = self.nodes[node_index]
 
         if node.matrix:
-            matrix = matrix.clone().multiply(Matrix4(node.matrix))
+            matrix = matrix.clone().multiply(utils.Matrix4(node.matrix))
             # XXX Check for translation/scale/rotation here?
         else:
             if node.scale:
@@ -86,7 +86,7 @@ class Slicer(Element):
         buffer_view_indices = list(set([
             self.accessors[id].buffer_view for id in accessor_indices] + [
             self.images[id].buffer_view for id in image_indices if self.images[id].buffer_view is not None]))
-        return Glb(self.__get_buffer(buffer_view_indices), meshes=self.__get_meshes(primitives, accessor_indices, material_indices), accessors=self.__get_accessors(accessor_indices, buffer_view_indices),
+        return Glb([self.__get_buffer(buffer_view_indices)], meshes=self.__get_meshes(primitives, accessor_indices, material_indices), accessors=self.__get_accessors(accessor_indices, buffer_view_indices),
                    buffer_views=self.__get_buffer_views(buffer_view_indices), materials=self.__get_materials(material_indices, image_indices), textures=self.__get_textures(len(texture_indices)), images=self.__get_images(image_indices, buffer_view_indices), samplers=self.__get_samplers(len(sampler_indices)))
 
     def __get_images(self, image_indices, buffer_view_indices):
@@ -151,8 +151,9 @@ class Slicer(Element):
         for index in buffer_view_indices:
             view = self.buffer_views[index]
             byte_offset = view.byte_offset if view.byte_offset else 0
-            ret += self.buffer[byte_offset:byte_offset +
-                               view.byte_length]
+            padding = utils.padded_len(view.byte_length) - view.byte_length;
+            ret += self.buffers[view.buffer][byte_offset:byte_offset + view.byte_length]
+            ret += b'\0' * padding
         return ret
 
     def __get_buffer_views(self, buffer_view_indices):
@@ -160,8 +161,9 @@ class Slicer(Element):
                for index in buffer_view_indices]
         offset = 0
         for view in ret:
+            view.buffer = 0
             view.byte_offset = offset
-            offset += view.byte_length
+            offset += utils.padded_len(view.byte_length)
 
         return ret
 
@@ -173,7 +175,7 @@ class Slicer(Element):
         return ret
 
     def get_bounding_box_by_primitives(self, primitives: list):
-        box = Box3()
+        box = utils.Box3()
         for primitive in primitives:
             accessor = self.accessors[primitive.attributes.POSITION]
             box.expand_by_point(accessor.max).expand_by_point(accessor.min)
