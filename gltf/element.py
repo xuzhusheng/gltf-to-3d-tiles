@@ -3,9 +3,11 @@ import utils
 
 
 class Element:
+    extensions = []
+
     def __init(self, camel_case=True, **kwargs) -> None:
         for key, value in kwargs.items():
-            if camel_case:
+            if camel_case and key not in Element.extensions:
                 key = utils.camel_to_snake(key)
 
             if type(value) == dict:
@@ -35,7 +37,7 @@ class Element:
         # return {utils.snake_to_camel(key): value.as_dict() if type(value) == Element else value for key, value in self.__dict__.items()}
         ret = {}
         for key, value in self.__dict__.items():
-            if camel_case:
+            if camel_case and key not in Element.extensions:
                 key = utils.snake_to_camel(key)
 
             if type(value) == Element:

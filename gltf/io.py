@@ -11,12 +11,17 @@ logger = logging.getLogger(__name__)
 
 def read_gltf(fin):
     with open(fin, encoding='utf-8') as f:
-        gltf = json.load(f, object_hook=lambda d: Element(**d))
+        data = json.load(f)
+        if hasattr(data, "extensionsUsed"):
+            Element.extensions = data["extensionsUsed"];
+        # gltf = json.load(f, object_hook=lambda d: Element(**d))
+        gltf = Element(**data)
 
     buffers = []
     for buffer in gltf.buffers:
         buffers.append(read_buffer(buffer.uri, Path(fin).parent))
 
+    delattr(gltf, "buffers")
     return gltf, buffers
 
 
