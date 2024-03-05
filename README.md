@@ -2,6 +2,14 @@
 
 glTF to 3d Tiles Converter. Convert glTF model to Glb, b3dm or 3d tiles format.
 
+## Read More
+I am writting articles to explain code snippets and methodology used at the repository:
+1. [3D Affine Transformation Matrices Implementation with NumPy](https://medium.com/@xuzhusheng/3d-affine-transformation-matrices-implementation-with-numpy-57f92058403c)
+2. [Manipulate JSON with Python Dynamic Object](https://medium.com/@xuzhusheng/manipulate-json-with-python-dynamic-object-fe885394d17f)
+3. [Converting between Snake Case and Camel Case](https://medium.com/@xuzhusheng/converting-between-naming-convention-with-python-2d91032bd0dc)
+
+***
+
 ## Usage
 
 ```text
