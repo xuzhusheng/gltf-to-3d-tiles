@@ -84,6 +84,14 @@ Options:
 ```
 
 ***
-## Support Me
+## Support:
+<p>
+  <a href="https://www.buymeacoffee.com/jason.xu"> <img align="left" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="jason.xu" /></a>
+  <a href="https://ko-fi.com/jasonxu"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="50" width="210" alt="jasonxu" /></a>
+</p>
+<br><br>
+<!--
+## Support
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/jason.xu)
-&emsp; [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I5VT4LU)
+&emsp; [![ko-fi](https://cdn.ko-fi.com/cdn/kofi3.png?v=3)](https://ko-fi.com/I2I5VT4LU)
+-->
