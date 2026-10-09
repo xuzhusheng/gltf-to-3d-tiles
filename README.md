@@ -83,6 +83,7 @@ Options:
   --help                  Show this message and exit.
 ```
 
+<!--
 ***
 ## Support:
 <p>
@@ -90,6 +91,7 @@ Options:
   <a href="https://ko-fi.com/jasonxu"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="50" width="210" alt="jasonxu" /></a>
 </p>
 <br><br>
+-->
 <!--
 ## Support
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/jason.xu)
